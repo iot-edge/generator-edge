@@ -1,6 +1,6 @@
 {
   "name": "${pkgName}",
-  "version": "1.0.1",
+  "version": "0.0.1",
   "description": "${description}",
   "author": "${author.name}",
   "keywords": [],

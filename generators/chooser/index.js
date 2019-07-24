@@ -11,11 +11,10 @@ const pluginGenerators = [
   { name: '1 - Device', value: 'underConstruction' },
   { name: '2 - Panel', value: 'underConstruction' },
   { name: '3 - Dashboard', value: 'underConstruction' },
-  { name: '4 - Web Page', value: 'underConstruction' },
   { name: '5 - Menu Item', value: 'underConstruction' },
   { name: '6 - Report', value: 'underConstruction' },
   { name: '7 - Node-Red Flow', value: 'underConstruction' },
-  { name: '8 - Node-Red Node', value: 'underConstruction' },
+  { name: '8 - Node-Red Node', value: 'nodeRedNode' },
   new inquirer.Separator()
 ];
 

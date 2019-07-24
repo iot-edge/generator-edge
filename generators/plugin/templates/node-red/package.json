@@ -1,0 +1,10 @@
+{
+  "name": "node-red-contrib-${pkgName}",
+  "version": "1.0.1",
+  "dependencies": {
+  },
+  "node-red": {
+    "nodes": {
+    }
+  }
+}

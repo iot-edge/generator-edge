@@ -5,7 +5,6 @@ const _ = require("lodash");
 const path = require("path");
 const deepExtend = require('deep-extend');
 const chalk = require('chalk');
-const { execFileSync } = require('child_process');
 const mtz = require('moment-timezone');
 const DEFAULT_HTTP_PORT = 8000;
 const DEFAULT_MQTT_PORT = 1883;
@@ -78,7 +77,7 @@ module.exports = class extends Generator {
 
     // Apply data model to template files
     const templateFiles = [
-      "package.json", "README.md", "node-red/package.json", "node-red/README.md"
+      "package.json", "README.md"
     ]
     templateFiles.forEach((filename)=> {
       let tmpl = _.template(fs.read(this.templatePath(filename)));
@@ -91,14 +90,6 @@ module.exports = class extends Generator {
       this.config.set("projectType", "plugin");
       this.config.save();
     }
-
-    // Copy the license to node-red
-    this.fs.copy(this.destinationPath('LICENSE'), this.destinationPath('node-red/LICENSE'));
-
-    // Link the node-red directory for development
-    execFileSync('npm', ['link', this.destinationPath('node-red')], {
-      cwd: this.destinationPath('test-site/data/nodered'),
-    });
 
     this.log("");
     this.log(`Your plugin has been created.`);

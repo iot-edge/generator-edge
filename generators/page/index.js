@@ -23,7 +23,8 @@ module.exports = class extends Generator {
     this.model = {
       name: '',
       pkgName: pkg.name,
-      slug: '',
+      ctrlName: '',
+      camelName: '',
       addToNav: 'n',
     }
 
@@ -34,8 +35,8 @@ module.exports = class extends Generator {
       {
         type: "input",
         name: "name",
-        message: "Dashboard name",
-        default: "New Dashboard"
+        message: "Page name",
+        default: "New Page"
       },
       {
         type: "input",
@@ -46,7 +47,8 @@ module.exports = class extends Generator {
     ];
 
     deepExtend(this.model, await this.prompt(prompts));
-    this.model.slug = this.model.name.toLowerCase().replace(/ /g,'-').replace(/[^\w-]/g,'');
+    this.model.ctrlName = this.model.name.trim().replace(/ /g,'') + 'Ctrl';
+    this.model.camelName = _.camelCase(this.model.name);
   }
 
   async configuring() {}
@@ -55,19 +57,34 @@ module.exports = class extends Generator {
   async writing() {
     let fs = this.fs;
 
-    // Create the dashboard file
-    let dashTmpl = _.template(fs.read(this.templatePath('dashboard.json')));
-    fs.write(this.destinationPath('src/dashboards/' + this.model.slug + '.json'), dashTmpl(this.model));
+    // Copy the template files
+    let pageDir = 'src/pages/' + this.model.camelName + '/';
+    fs.copy(this.templatePath('page'), this.destinationPath(pageDir), { globOptions: { dot: true } });
 
-    // Add dashboard to the to plugin.json (without asking the user)
+    // Apply data model to template files
+    const templateFiles = [
+      "index.html", "index.js"
+    ]
+    templateFiles.forEach((filename)=> {
+      let tmpl = _.template(fs.read(this.templatePath('page/' + filename)));
+      fs.write(this.destinationPath(pageDir + '/' + filename), tmpl(this.model));
+    });
+
+    // Add the control to the module.ts file (without asking)
+    let module = this.fs.read(this.destinationPath("src/module.ts"), '');
+    module = `${module}export { ${this.model.ctrlName} } from './pages/${this.model.camelName}';\n`
+    writeFileSync(this.destinationPath("src/module.ts"), module);
+
+    // Add page to the to plugin.json (without asking the user)
     let plugin = this.fs.readJSON(this.destinationPath("src/plugin.json"), {});
     plugin.includes.push(
       {
-        type: "dashboard",
+        type: "page",
         name: this.model.name,
-        path: "dashboards/" + this.model.slug + '.json',
+        component: this.model.ctrlName,
+        role: "Viewer", 
         addToNav: this.model.addToNav == 'y',
-        defaultNav: false
+        defaultNav: false,
       }
     );
     writeFileSync(this.destinationPath("src/plugin.json"), JSON.stringify(plugin,null,2));
@@ -75,11 +92,12 @@ module.exports = class extends Generator {
   }
 
   end() {
-    this.log(`   ${chalk.green("merged")} dashboard definition into plugin.json`);
+    this.log(`   ${chalk.green("merged")} page control into module.ts`);
+    this.log(`   ${chalk.green("merged")} page definition into plugin.json`);
     this.log("");
     this.log("Grafana restarted.");
     this.log("");
-    this.log(`Navigate to http://localhost:8000/edge/plugins/${this.model.pkgName}/?page=dashboards to import.`);
+    this.log(`Navigate to http://localhost:8000/edge/plugins/${this.model.pkgName} to view.`);
     this.log("");
   }
 

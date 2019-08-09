@@ -11,10 +11,12 @@ const STAT_INTERVAL_MS = 9999;
 const { spawn } = require('child_process');
 const util = require('util');
 const execFile = util.promisify(require('child_process').execFile);
-const writeFile = util.promisify(require('fs').writeFile);
-const STATS_FILE = './data/nodered/stats.json';
+const fs = require('fs');
+const writeFile = util.promisify(fs.writeFile);
 const writeToFile = (process.argv[2] == '-f');
+
 let statStartStamp = 0;
+let STATS_FILE = '';
 
 // Request to daemonize (run in background)
 if (process.argv[2] === '-d') {
@@ -113,8 +115,23 @@ function parseNum(input, part) {
   return ext == '%' ? num : Math.floor(num);
 }
 
+// Place the contents of the .env file into the environment
+function loadEnv() {
+  let envEntries = fs.readFileSync('./.env').toString().split('\n');
+  for (let entryNum in envEntries) {
+    let entry = envEntries[entryNum].trim();
+    if (entry.substr(0,1) == "#") {continue;}
+    let nvPair = entry.split('=');
+    if (nvPair.length == 2) {process.env[nvPair[0]] = nvPair[1];}
+  }
+}
+
 // Kick it off
-if (!writeToFile) {
+loadEnv();
+if (writeToFile) {
+  STATS_FILE = (process.env['MNT_DIR'] || '.') + '/data/nodered/stats.json';
+}
+else {
   console.log("Gathering stats...");
 }
 gatherStats();

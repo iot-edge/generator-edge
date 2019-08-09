@@ -63,9 +63,11 @@ module.exports = class extends Generator {
 
     this.composeWith(require.resolve('generator-edge/generators/server'), {
       prompt: '\nGenerating a plugin test server\n',
-      serverDir:'test-site/',
+      serverDir: 'test-site/',
+      noderedPluginVolume: "\n      - '../node-red:/data/node_modules/node-red-contrib-" + this.model.pkgName + "'",
+      grafanaPluginVolume: "\n      - '..:/var/lib/grafana/plugins/" + this.model.pkgName + "'",
       siteId: 'edge',
-      siteName: "Plugin Test Site",
+      siteName: this.model.description,
       siteFQDN: "localhost"
     });
   }
@@ -78,12 +80,14 @@ module.exports = class extends Generator {
 
     // Apply data model to template files
     const templateFiles = [
-      "package.json", "README.md", "node-red/package.json", "node-red/README.md"
+      "package.json", "README.md", "node-red/package.json", "node-red/README.md",
+      "src/plugin.json", "src/components/appConfig/index.html"
     ]
     templateFiles.forEach((filename)=> {
       let tmpl = _.template(fs.read(this.templatePath(filename)));
       fs.write(this.destinationPath(filename), tmpl(this.model));
     });
+
   }
 
   end() {
@@ -94,11 +98,6 @@ module.exports = class extends Generator {
 
     // Copy the license to node-red
     this.fs.copy(this.destinationPath('LICENSE'), this.destinationPath('node-red/LICENSE'));
-
-    // Link the node-red directory for development
-    execFileSync('npm', ['link', this.destinationPath('node-red')], {
-      cwd: this.destinationPath('test-site/data/nodered'),
-    });
 
     this.log("");
     this.log(`Your plugin has been created.`);

@@ -3,14 +3,20 @@
   "version": "1.0.1",
   "description": "${description}",
   "author": "${author.name}",
-  "keywords": [],
+  "keywords": ["iot-edge", "iot-edge-plugin"],
   "dependencies": {},
   "devDependencies": {
-    "watch": "^1.0.2"
+    "@grafana/data": "^6.4.0-alpha.44-72b0e9570",
+    "@grafana/toolkit": "next",
+    "@grafana/ui": "latest"
   },
   "scripts": {
     "start": "cd test-site; npm start",
-    "stop": "cd test-site; npm stop"
+    "stop": "cd test-site; npm stop",
+    "build": "grafana-toolkit plugin:build",
+    "test": "grafana-toolkit plugin:test",
+    "dev": "grafana-toolkit plugin:dev",
+    "watch": "grafana-toolkit plugin:dev --watch"
   },
-  "license": ""
+  "license": "${license}"
 }

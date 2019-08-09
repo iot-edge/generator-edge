@@ -1,0 +1,18 @@
+{
+  "type": "panel",
+  "name": "${name}",
+  "id": "${panelId}",
+
+  "info": {
+    "description": "${name}",
+    "logos": {
+      "small": "img/panel-icon.png",
+      "large": "img/panel-icon.png"
+    }
+  },
+
+  "dependencies": {
+    "grafanaVersion": "6.3.x",
+    "plugins": []
+  }
+}

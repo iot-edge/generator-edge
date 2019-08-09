@@ -1,0 +1,2 @@
+${panelName} Panel
+=====

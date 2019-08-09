@@ -1,49 +1,44 @@
-/* Edge Server Plugin Generator */
+/* Node-Red Node Generator */
 "use strict";
 const Generator = require("yeoman-generator");
 const _ = require("lodash");
 const path = require("path");
 const deepExtend = require('deep-extend');
+const { writeFileSync } = require('fs');
 const chalk = require('chalk');
-const mtz = require('moment-timezone');
-const DEFAULT_HTTP_PORT = 8000;
-const DEFAULT_MQTT_PORT = 1883;
-const DEFAULT_MQTT_WS_PORT = 9001;
 
 module.exports = class extends Generator {
 
   initializing() {
 
-    // This should never be called if not first run
+    // This should never be called on first run
     this.firstRun = !this.config.get("projectType");
+    if (this.firstRun || this.config.get('projectType') !== 'plugin') {
+      this.log(`This generator must be run within a plugin project`)
+      process.exit(1);
+    }
     let pkg = this.fs.readJSON(this.destinationPath("package.json"), {});
 
     // Define the template data model for this generator type
     this.model = {
-      pkgName: pkg.name || path.basename(this.destinationRoot()),
-      description: pkg.description || "",
-      pkgVersion: pkg.version || "0.0.1",
-      author: pkg.author || {
-        name: this.user.git.name() || null,
-        email: "",
-        website: ""
-      },
-      license: pkg.license || "MIT",
+      pkgName: pkg.name,
+      pkgDescription: pkg.description,
+      nodeName: 'newNode',
+      description: '',
     }
-
   }
 
   async prompting() {
 
     const prompts = [
       {
-        name: "pkgName",
-        message: "Plugin name",
-        default: this.model.pkgName,
+        name: "nodeName",
+        message: "Node name",
+        default: this.model.nodeName,
       },
       {
         name: "description",
-        message: "Plugin Description",
+        message: "Node Description",
         default: this.model.description,
       }
     ];
@@ -51,50 +46,30 @@ module.exports = class extends Generator {
     deepExtend(this.model, await this.prompt(prompts));
   }
 
-  default() {
-
-    this.composeWith(require.resolve('generator-license'), {
-      name: this.model.author.name,
-      email: this.model.author.email,
-      website: this.model.author.website,
-      defaultLicense: this.model.license,
-    });
-
-    this.composeWith(require.resolve('generator-edge/generators/server'), {
-      prompt: '\nGenerating a plugin test server\n',
-      serverDir:'test-site/',
-      siteId: 'edge',
-      siteName: "Plugin Test Site",
-      siteFQDN: "localhost"
-    });
-  }
-
   async writing() {
     let fs = this.fs;
 
-    // Start by copying all files
-    fs.copy(this.templatePath('**'), this.destinationPath(), { globOptions: { dot: true } });
+    // Create the node .js and .html files
+    let jsTmpl = _.template(fs.read(this.templatePath('node.js')));
+    fs.write(this.destinationPath('node-red/lib/' + this.model.nodeName + '.js'), jsTmpl(this.model));
+    let htmlTmpl = _.template(fs.read(this.templatePath('node.html')));
+    fs.write(this.destinationPath('node-red/lib/' + this.model.nodeName + '.html'), htmlTmpl(this.model));
 
-    // Apply data model to template files
-    const templateFiles = [
-      "package.json", "README.md"
-    ]
-    templateFiles.forEach((filename)=> {
-      let tmpl = _.template(fs.read(this.templatePath(filename)));
-      fs.write(this.destinationPath(filename), tmpl(this.model));
-    });
+    // Add the node to package.json (without asking the user)
+    let pkg = this.fs.readJSON(this.destinationPath("node-red/package.json"), {});
+    pkg['node-red'].nodes[this.model.nodeName] = 'lib/' + this.model.nodeName + '.js'
+    writeFileSync(this.destinationPath("node-red/package.json"), JSON.stringify(pkg,null,2));
+
+    // Restart
+    fs.write(this.destinationPath('test-site/data/nodered/touch-to-restart'), '');
   }
 
   end() {
-    if (this.firstRun) {
-      this.config.set("projectType", "plugin");
-      this.config.save();
-    }
-
+    let fs = this.fs;
+    this.log(`Process restarted.`)
     this.log("");
-    this.log(`Your plugin has been created.`);
-    this.log(`Run ${chalk.red("npm start")} to start the test server.`)
-    this.log(`Run ${chalk.red("yo edge")} to build plugin components.`)
+    this.log(`Node "${this.model.description}" has been created.`);
+    this.log(`Navigate to http://localhost:8000/edge/node-red/ to see it in the palette.`);
     this.log("");
   }
 

@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "A deployment of the iot-edge server",
   "dependencies": {},
+  "license": "${license}",
   "scripts": {
     "start": "docker-compose up -d && node stats -d && docker-compose exec nginx sh -c 'echo;echo Edge server running on http://$SITE_FQDN:$HTTP_PORT/;echo'",
     "stop": "docker-compose down -t 1",

@@ -1,0 +1,16 @@
+{
+  "title": "${name}",
+  "panels": [
+    {
+      "content": "<div class=\"text-center dashboard-header\">\n  <span>${name}</span>\n</div>",
+      "gridPos": {"h": 2, "w": 24, "x": 0, "y": 0 },
+      "id": 1,
+      "mode": "html",
+      "options": {},
+      "title": "",
+      "transparent": true,
+      "type": "text"
+    }
+  ],
+  "tags": [ "iot-edge" ]
+}

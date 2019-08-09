@@ -8,13 +8,13 @@ const firstRunGenerators = [
 ];
 
 const pluginGenerators = [
-  { name: '1 - Device', value: 'underConstruction' },
-  { name: '2 - Panel', value: 'underConstruction' },
-  { name: '3 - Dashboard', value: 'underConstruction' },
-  { name: '5 - Menu Item', value: 'underConstruction' },
-  { name: '6 - Report', value: 'underConstruction' },
-  { name: '7 - Node-Red Flow', value: 'underConstruction' },
-  { name: '8 - Node-Red Node', value: 'nodeRedNode' },
+  { name: '1 - IoT Device', value: 'underConstruction' },
+  { name: '2 - UI Panel', value: 'panel' },
+  { name: '3 - UI Dashboard', value: 'dashboard' },
+  { name: '4 - UI Page', value: 'page' },
+  { name: '5 - Report', value: 'underConstruction' },
+  { name: '6 - Node-Red Node', value: 'nodeRedNode' },
+  { name: '7 - Node-Red Flow', value: 'nodeRedFlow' },
   new inquirer.Separator()
 ];
 

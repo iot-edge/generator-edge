@@ -1,0 +1,24 @@
+[
+  {
+    "id": "iot-edge.mqtt-broker",
+    "type": "mqtt-broker",
+    "z": "",
+    "name": "IoT Edge MQTT Broker",
+    "broker": "mqtt",
+    "port": "1883",
+    "clientid": "",
+    "usetls": false,
+    "compatmode": false,
+    "keepalive": "60",
+    "cleansession": true,
+    "birthTopic": "",
+    "birthQos": "0",
+    "birthPayload": "",
+    "closeTopic": "",
+    "closeQos": "0",
+    "closePayload": "",
+    "willTopic": "",
+    "willQos": "0",
+    "willPayload": ""
+  }
+]

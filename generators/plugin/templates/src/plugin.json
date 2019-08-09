@@ -1,0 +1,35 @@
+{
+  "type": "app",
+  "name": "${description}",
+  "id": "${pkgName}",
+
+  "info": {
+    "description": "${description}",
+    "author": {
+      "name": "${author.name}",
+      "url": "${author.url}"
+    },
+    "keywords": ["iot-edge","iot-edge-plugin"],
+    "logos": {
+      "small": "img/iot-edge-grey-icon.png",
+      "large": "img/iot-edge-green-bg-100.png"
+    },
+    "links": [
+      {"name": "Website", "url": "https://iot-edge.github.io/iot-edge-docs/#/"},
+      {"name": "License", "url": "https://github.com/iot-edge/iot-edge/blob/master/LICENSE"}
+    ],
+    "screenshots": [
+      {"name": "Screenshot 1", "path": "img/iot-edge-green-bg-100.png"}
+    ],
+    "version": "%VERSION%",
+    "updated": "%TODAY%"
+  },
+
+  "dependencies": {
+    "grafanaVersion": "6.3.x",
+    "plugins": []
+  },
+
+  "includes": []
+
+}

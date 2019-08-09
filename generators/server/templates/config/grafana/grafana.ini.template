@@ -1,7 +1,7 @@
 [paths]
-logs = /log
-data = /data
-plugins = /plugins
+logs = /var/log/grafana
+data = /var/lib/grafana
+plugins = /var/lib/grafana/plugins
 
 [log]
 level = Warn

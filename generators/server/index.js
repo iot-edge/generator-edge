@@ -23,6 +23,8 @@ module.exports = class extends Generator {
     // Get prior model values from the edge-env file
     this.options = this.options || {};
     this.options.serverDir = this.options.serverDir || "";
+    this.options.noderedPluginVolume = this.options.noderedPluginVolume || "";
+    this.options.grafanaPluginVolume = this.options.grafanaPluginVolume || "";
     let opts = this.options;
     let edgeEnv = {};
     this.firstRun = true;
@@ -41,7 +43,20 @@ module.exports = class extends Generator {
       httpPort: edgeEnv.HTTP_PORT || opts.httpPort || DEFAULT_HTTP_PORT,
       mqttPort: edgeEnv.MQTT_PORT || opts.mqttPort || DEFAULT_MQTT_PORT,
       mqttWebSocketPort: edgeEnv.MQTT_WS_PORT || opts.mqttWebSocketPort || DEFAULT_MQTT_WS_PORT,
-      TZ: edgeEnv.TZ || mtz.tz.guess()
+      tz: edgeEnv.TZ || mtz.tz.guess(),
+      noderedPluginVolume: opts.noderedPluginVolume,
+      grafanaPluginVolume: opts.grafanaPluginVolume,
+
+      // Retain these as variables during template replacement
+      SITE_ID: '${SITE_ID}',
+      SITE_NAME: '${SITE_NAME}',
+      SITE_FQDN: '${SITE_FQDN}',
+      TZ: '${TZ}',
+      HTTP_PORT: '${HTTP_PORT}',
+      MQTT_PORT: '${MQTT_PORT}',
+      MQTT_WS_PORT: '${MQTT_WS_PORT}',
+      MNT_DIR: '${MNT_DIR}',
+
     }
 
   }
@@ -130,6 +145,7 @@ module.exports = class extends Generator {
     // Apply data model to template files
     const templateFiles = [
       ".env",
+      "docker-compose.yml",
       "data/edge/docs/index.html",
       "data/edge/docs/README.md",
       "data/edge/docs/_coverpage.md",

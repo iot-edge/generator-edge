@@ -29,4 +29,7 @@ yo edge
 
 ## License
 
-MIT © [Microclimates](https://www.microclimates.com)
+May be freely distributed under the [MIT license](https://raw.githubusercontent.com/iot-edge/iot-edge/master/LICENSE).
+
+Copyright (c) 2019 [Microclimates](https://github.com/microclimates) and the 
+[Open IoT Edge contributors](https://github.com/iot-edge/iot-edge/graphs/contributors

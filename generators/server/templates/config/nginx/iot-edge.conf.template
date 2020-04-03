@@ -63,6 +63,11 @@ server {
     proxy_set_header X-WEBAUTH-ROLE $role;
 
     proxy_pass http://graphite;
+     
+    # This is for web sockets
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection $connection_upgrade;
   }
 
   # Node Red direct
@@ -98,6 +103,11 @@ server {
     proxy_set_header X-WEBAUTH-ROLE $role;
 
     proxy_pass http://nodered;
+     
+    # This is for web sockets
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection $connection_upgrade;
   }
 
   # Documentation pages
@@ -163,6 +173,11 @@ server {
 
     proxy_pass http://grafana;
     proxy_intercept_errors on;
+     
+    # This is for web sockets
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection $connection_upgrade;
   }
 
 }

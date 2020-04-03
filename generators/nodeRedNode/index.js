@@ -44,6 +44,7 @@ module.exports = class extends Generator {
     ];
 
     deepExtend(this.model, await this.prompt(prompts));
+    this.model.pkgNodeName = this.model.pkgName + ':' + this.model.nodeName;
   }
 
   async writing() {
@@ -57,7 +58,7 @@ module.exports = class extends Generator {
 
     // Add the node to package.json (without asking the user)
     let pkg = this.fs.readJSON(this.destinationPath("node-red/package.json"), {});
-    pkg['node-red'].nodes[this.model.nodeName] = 'lib/' + this.model.nodeName + '.js'
+    pkg['node-red'].nodes[this.model.pkgNodeName] = 'lib/' + this.model.nodeName + '.js'
     writeFileSync(this.destinationPath("node-red/package.json"), JSON.stringify(pkg,null,2));
 
     // Restart

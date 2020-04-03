@@ -61,6 +61,9 @@ module.exports = class extends Generator {
       defaultLicense: this.model.license,
     });
 
+    console.log(require.resolve('generator-license'));
+    console.log(require.resolve('generator-edge'));
+    
     this.composeWith(require.resolve('generator-edge/generators/server'), {
       prompt: '\nGenerating a plugin test server\n',
       serverDir: 'test-site/',

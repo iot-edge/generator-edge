@@ -6,9 +6,13 @@
   "keywords": ["iot-edge", "iot-edge-plugin"],
   "dependencies": {},
   "devDependencies": {
-    "@grafana/data": "^6.4.0-alpha.44-72b0e9570",
-    "@grafana/toolkit": "next",
-    "@grafana/ui": "latest"
+    "@grafana/data": "^6.4.0-alpha.44-93ecf63e7",
+    "@grafana/runtime": "^6.4.0-alpha.44-93ecf63e7",
+    "@grafana/toolkit": "^6.4.0-alpha.44-93ecf63e7",
+    "@grafana/ui": "^6.4.0-alpha.44-93ecf63e7",
+    "@types/grafana": "github:CorpGlory/types-grafana.git",
+    "@types/lodash": "^4.14.135",
+    "lodash": "^4.17.4"
   },
   "scripts": {
     "start": "cd test-site; npm start",

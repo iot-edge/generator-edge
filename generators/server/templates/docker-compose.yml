@@ -10,178 +10,6 @@ services:
     ports:
       - '${HTTP_PORT}:80'
     volumes:
-      - './config/nginx/nginx.conf:/etc/nginx/nginx.conf'
-      - './config/nginx/iot-edge.conf:/etc/nginx/iot-edge.conf'
-      - './config/nginx/iot-edge.conf.template:/etc/nginx/iot-edge.conf.template'
-      - './config/nginx/startup.sh:/startup.sh'
-      - './data/nginx:/mnt'
-      - './data/edge/docs:/mnt/docs'
-      - './log/nginx:/tmp/logs'
-    restart: always
-    depends_on:
-      - nodered
-      - graphite
-      - grafana
-      - edge
-    command: ['sh', '-c', 'exec /startup.sh']
-  graphite:
-    image: 'graphiteapp/graphite-statsd:1.1.4'
-    container_name: graphite
-    env_file: .env
-    networks:
-      - internal
-    # ports:
-    #   - '8080:80'
-    #   - '2003-2004:2003-2004'
-    #   - '2023-2024:2023-2024'
-    #   - '8125:8125/udp'
-    #   - '8126:8126'
-    volumes:
-      - './config/graphite/local_settings.py:/opt/graphite/webapp/graphite/local_settings.py'
-      - './config/graphite/carbon.conf:/opt/graphite/conf/carbon.conf'
-      - './config/graphite/carbon.conf.template:/opt/graphite/conf/carbon.conf.template'
-      - './config/graphite/storage-aggregation.conf:/opt/graphite/conf/storage-aggregation.conf'
-      - './config/graphite/storage-schemas.conf:/opt/graphite/conf/storage-schemas.conf'
-      - './config/graphite/statsd-config.js:/opt/statsd/config_udp.js'
-      - './config/graphite/startup.sh:/startup.sh'
-      - './data/graphite/storage:/opt/graphite/storage'
-      - './log/graphite:/var/log'
-      - './log/graphite:/tmp/logs'
-    restart: always
-    command: ['sh', '-c', 'exec /startup.sh']
-  mqtt:
-    image: 'eclipse-mosquitto:1.6.2'
-    container_name: mqtt
-    env_file: .env
-    networks:
-      - dmz
-      - internal
-    ports:
-      - '${MQTT_PORT}:1883'
-      - '${MQTT_WS_PORT}:9001'
-    volumes:
-      - './config/mqtt:/mosquitto/config'
-      - './config/mqtt/startup.sh:/startup.sh'
-      - './data/mqtt:/mosquitto/data'
-      - './log/mqtt:/var/log'
-      - './log/mqtt:/tmp/logs'
-    restart: always
-    command: ['sh', '-c', 'exec /startup.sh']
-  nodered:
-    image: 'iotedge/node-red:1.0.7'
-    container_name: nodered
-    env_file: .env
-    depends_on:
-      - mqtt
-    networks:
-      - internal
-    # ports:
-    #   - '1880:1880'
-    volumes:
-      - './config/edge/mon:/mon'
-      - './config/nodered/settings.js:/data/settings.js'
-      - './config/nodered/startup.sh:/startup.sh'
-      - './log/nodered:/var/log'
-      - './log/nodered:/tmp/logs'
-      - './data/nodered:/data'${noderedPluginVolume}
-    depends_on:
-      - 'mqtt'
-    restart: always
-    command: ['sh', '-c', 'exec /startup.sh']
-  grafana:
-    image: 'grafana/grafana:6.1.6'
-    container_name: grafana
-    env_file: .env
-    networks:
-      - internal
-    # ports:
-    #   - '3000:3000'
-    depends_on:
-      - 'loki'
-    volumes:
-      - './config/edge/mon:/mon'
-      - './config/grafana:/etc/grafana'
-      - './config/grafana/startup.sh:/startup.sh'
-      - './data/grafana:/data'
-      - './data/grafana:/var/lib/grafana'
-      - './log/grafana:/var/log/grafana'
-      - './log/grafana:/tmp/logs'${grafanaPluginVolume}
-    restart: always
-    entrypoint: ['sh', '-c', 'exec /startup.sh']
-  edge:
-    image: 'iotedge/server:2.4.1'
-    container_name: edge
-    env_file: .env
-    environment:
-      NODE_CONFIG_DIR: /mnt/config/edge
-    networks:
-      - internal
-    depends_on:
-      - grafana
-    # ports:
-    #   - '9002:9002'
-    #   - '9003:9003'
-    volumes:
-      - '.:/mnt'
-      - './config/edge/mon:/mon'
-      - './config/edge/startup.sh:/startup.sh'
-      - './data/edge:/data'
-      - './log/edge:/tmp/logs'
-      # For iot-edge server development:
-      #   git clone https://github.com/iot-edge/iot-edge.git
-      #   Uncomment the line below and run "npm restart"
-      #   Run "docker-compose restart edge" to reload changes
-      # - '/path/to/iot-edge:/usr/local/lib/node_modules/iot-edge'
-    restart: always
-    command: ['sh', '-c', 'exec /startup.sh']
-  loki:
-    image: 'grafana/loki:ce6ec3df'
-    container_name: loki
-    networks:
-      - internal
-    # ports:
-    #   - '3100:3100'
-    volumes:
-      - './config/loki:/etc/loki'
-      - './config/loki/startup.sh:/startup.sh'
-      - './data/loki:/tmp/loki'
-      - './log/loki:/tmp/logs'
-    restart: always
-    entrypoint: ['sh', '-c', 'exec /startup.sh']
-  promtail:
-    image: 'grafana/promtail:master-b389e44'
-    container_name: promtail
-    volumes:
-      - './config/promtail:/etc/promtail'
-      - './config/promtail/startup.sh:/startup.sh'
-      - './data/promtail:/promdata'
-      - './log/promtail:/tmp/logs'
-      - './log:/log'
-    networks:
-      - internal
-    # ports:
-    #   - '9080:9080'
-    depends_on:
-      - 'loki'
-    entrypoint: ['sh', '-c', 'exec /startup.sh']
-networks:
-  dmz:
-    driver: bridge
-  internal:
-    driver: bridge
-
-version: '3'
-services:
-  nginx:
-    image: 'nginx:stable-alpine'
-    container_name: nginx
-    env_file: .env
-    networks:
-      - dmz
-      - internal
-    ports:
-      - '${HTTP_PORT}:80'
-    volumes:
       - '${MNT_DIR}/config/nginx/nginx.conf:/etc/nginx/nginx.conf'
       - '${MNT_DIR}/config/nginx/iot-edge.conf:/etc/nginx/iot-edge.conf'
       - '${MNT_DIR}/config/nginx/iot-edge.conf.template:/etc/nginx/iot-edge.conf.template'
@@ -240,7 +68,7 @@ services:
     restart: always
     command: ['sh', '-c', 'exec /startup.sh']
   nodered:
-    image: 'iotedge/node-red:1.0.7'
+    image: 'iotedge/node-red:prod'
     container_name: nodered
     env_file: .env
     depends_on:
@@ -261,7 +89,7 @@ services:
     restart: always
     command: ['sh', '-c', 'exec /startup.sh']
   grafana:
-    image: 'grafana/grafana:6.3.2'
+    image: 'grafana/grafana:6.3.4'
     container_name: grafana
     env_file: .env
     networks:
@@ -280,8 +108,24 @@ services:
       - '${MNT_DIR}/log/grafana:/tmp/logs'${grafanaPluginVolume}
     restart: always
     entrypoint: ['sh', '-c', 'exec /startup.sh']
+  redis:
+    image: 'redislabs/redisearch:latest'
+    container_name: redis
+    volumes:
+      - './config/edge/mon:/mon'
+      - '${MNT_DIR}/config/redis/redis.conf:/redis.conf'
+      - '${MNT_DIR}/config/redis/startup.sh:/startup.sh'
+      - '${MNT_DIR}/data/redis:/data'
+      - '${MNT_DIR}/log/redis:/tmp/logs'
+    networks:
+      - internal
+    # ports:
+    #   - '6380:6380'
+    depends_on:
+      - 'loki'
+    entrypoint: ['sh', '-c', 'exec /startup.sh']
   edge:
-    image: 'iotedge/server:2.4.1'
+    image: 'iotedge/server:prod'
     container_name: edge
     env_file: .env
     environment:

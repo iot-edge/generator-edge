@@ -1,9 +1,9 @@
 <!-- Registration -->
 <script type="text/javascript">
-  RED.nodes.registerType('${nodeName}',{
+  RED.nodes.registerType('${pkgNodeName}',{
       category: '${pkgDescription}',     // Palette category
       defaults: {             // Editable properties
-        name: {value:""}
+        nodeName: {value:""}
       },
       inputs: 1,
       outputs: 1,
@@ -24,28 +24,31 @@
 
       // Label style guide: https://nodered.org/docs/creating-nodes/appearance#labels
       label: function() {
-        return this.name || '${nodeName}';
+        return this.nodeName || '${nodeName}';
       },
       paletteLabel: function() {
         return '${nodeName}';
       },
       labelStyle: function() {
-        return this.name ? "node_label_italic" : "";
+        return this.nodeName ? "node_label_italic" : "";
       },
 
   });
 </script>
 
 <!-- Properties Editor -->
-<script type="text/x-red" data-template-name="${nodeName}">
+<script type="text/x-red" data-template-name="${pkgNodeName}">
+<input type="text" id="username" style="width:0;height:0;z-index:-1;position:absolute;left:0;top:0" />
+<input type="password" id="password" style="width:0;height:0;z-index:-1;position:absolute;left:0;top:0" />
+
 <div class="form-row">
-    <label for="node-input-name"><i class="icon-tag"></i> Name</label>
-    <input type="text" id="node-input-name" placeholder="${description}">
+    <label for="node-input-nodeName"><i class="icon-tag"></i> Name</label>
+    <input type="text" id="node-input-nodeName" placeholder="${description}">
 </div>
 </script>
 
 <!-- Help Text -->
-<script type="text/x-red" data-help-name="${nodeName}">
+<script type="text/x-red" data-help-name="${pkgNodeName}">
  <h3>${description}</h3>
  <hr/>
  <p>

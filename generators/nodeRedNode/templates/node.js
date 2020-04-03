@@ -23,7 +23,7 @@ module.exports = function(RED) {
     node.on('input', function(msg) {
       var topic = msg.topic;
       var payload = msg.payload;
-      var name = config.name;
+      var nodeName = config.nodeName;
       node.status({fill:"green",shape:"dot",text:""});
     });
 
@@ -33,5 +33,5 @@ module.exports = function(RED) {
     });
   }
 
-  RED.nodes.registerType("${nodeName}", ${nodeName}Node);
+  RED.nodes.registerType("${pkgNodeName}", ${nodeName}Node);
 }
